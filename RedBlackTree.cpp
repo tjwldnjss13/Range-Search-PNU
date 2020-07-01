@@ -156,7 +156,7 @@ void RedBlackTreePnt::rb_insert_x(int index, Point pnt) {
     */
 
     // 중복 비허용
-    if (this->rb_search_x == NULL) {
+    if (this->rb_search_x(pnt) == NULL) {
         this->N_pnt++;
         this->N_dup++;
 
@@ -217,7 +217,7 @@ void RedBlackTreePnt::rb_insert_y(int index, Point pnt) {
     */
 
     // 중복 비허용
-    if (this->rb_search_y == NULL) {
+    if (this->rb_search_y(pnt) == NULL) {
         this->N_pnt++;
         this->N_dup++;
 
