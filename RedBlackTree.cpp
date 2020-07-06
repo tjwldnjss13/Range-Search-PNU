@@ -12,14 +12,15 @@ RedBlackTreePnt::RedBlackTreePnt(int xy_idx) {
 }
 Node *RedBlackTreePnt::rb_search_x(Point pnt) {
 	Node *cur = this->root;
+
 	while (cur != NULL) {
-		if (pnt.x < cur->pnt[0].x)          
+		if (pnt.x < cur->pnt[0].x)
 			cur = cur->left;
-		else if (pnt.x > cur->pnt[0].x)     
+		else if (pnt.x > cur->pnt[0].x)
 			cur = cur->right;
 		else {
 			for (int p_i = 0; p_i < cur->pnt.size(); p_i++) {
-				if (cur->pnt[p_i].y == pnt.y)       
+				if (cur->pnt[p_i].y == pnt.y)
 					return cur;
 			}
 			break;
@@ -29,12 +30,16 @@ Node *RedBlackTreePnt::rb_search_x(Point pnt) {
 }
 Node *RedBlackTreePnt::rb_search_y(Point pnt) {
 	Node *cur = this->root;
+
 	while (cur != NULL) {
-		if (pnt.y < cur->pnt[0].y)          cur = cur->left;
-		else if (pnt.y > cur->pnt[0].y)     cur = cur->right;
+		if (pnt.y < cur->pnt[0].y)          
+			cur = cur->left;
+		else if (pnt.y > cur->pnt[0].y)     
+			cur = cur->right;
 		else {
 			for (int p_i = 0; p_i < cur->pnt.size(); p_i++) {
-				if (cur->pnt[p_i].x == pnt.x)       return cur;
+				if (cur->pnt[p_i].x == pnt.x)       
+					return cur;
 			}
 			break;
 		}
@@ -44,7 +49,8 @@ Node *RedBlackTreePnt::rb_search_y(Point pnt) {
 	return NULL;
 }
 Node *RedBlackTreePnt::rotate_left(Node *node) {
-	if (node->right == NULL)    return NULL;
+	if (node->right == NULL)    
+		return NULL;
 
 	Node *parent_temp = NULL;
 	int child_f;
@@ -54,8 +60,10 @@ Node *RedBlackTreePnt::rotate_left(Node *node) {
 	else {
 		parent_temp = node->parent;
 
-		if (node == parent_temp->left)      child_f = 0;
-		else                                child_f = 1;
+		if (node == parent_temp->left)      
+			child_f = 0;
+		else                                
+			child_f = 1;
 	}
 
 	Node *new_subroot = node->right;
@@ -67,17 +75,22 @@ Node *RedBlackTreePnt::rotate_left(Node *node) {
 	else {
 		new_subroot->parent = parent_temp;
 
-		if (child_f == 0)       parent_temp->left = new_subroot;
-		else if (child_f == 1)  parent_temp->right = new_subroot;
+		if (child_f == 0)       
+			parent_temp->left = new_subroot;
+		else if (child_f == 1)  
+			parent_temp->right = new_subroot;
 	}
 
 	Node *sub_child = new_subroot->left;
 
 	new_subroot->left = node;
-	node->parent = new_subroot;
 	new_subroot->left->right = sub_child;
 
-	if (sub_child != NULL)      sub_child->parent = new_subroot->left;
+	// 추가한 부분
+	new_subroot->left->parent = new_subroot;
+
+	if (sub_child != NULL)      
+		sub_child->parent = new_subroot->left;
 
 	//delete parent_temp;
 	//delete sub_child;
@@ -85,18 +98,21 @@ Node *RedBlackTreePnt::rotate_left(Node *node) {
 	return new_subroot;
 }
 Node *RedBlackTreePnt::rotate_right(Node *node) {
+	if (node->left == NULL)
+		return NULL;
+
 	int child_f;
-
-	if (node->left == NULL)     return NULL;
-
 	Node *parent_temp = NULL;
 
-	if (node == this->root)     child_f = -1;
+	if (node == this->root)     
+		child_f = -1;
 	else {
 		parent_temp = node->parent;
 
-		if (node == parent_temp->left)     child_f = 0;
-		else                               child_f = 1;
+		if (node == parent_temp->left)     
+			child_f = 0;
+		else                               
+			child_f = 1;
 	}
 
 	Node *new_subroot = node->left;
@@ -108,16 +124,22 @@ Node *RedBlackTreePnt::rotate_right(Node *node) {
 	else {
 		new_subroot->parent = parent_temp;
 
-		if (child_f == 0)       parent_temp->left = new_subroot;
-		else if (child_f == 1)  parent_temp->right = new_subroot;
+		if (child_f == 0)       
+			parent_temp->left = new_subroot;
+		else if (child_f == 1)  
+			parent_temp->right = new_subroot;
 	}
 
-	Node *sub_child = new_subroot->right;
+	Node *child_temp = new_subroot->right;
 
 	new_subroot->right = node;
-	new_subroot->right->left = sub_child;
+	new_subroot->right->left = child_temp;
 
-	if (sub_child != NULL)      sub_child->parent = new_subroot->right;
+	// 추가한 부분
+	new_subroot->right->parent = new_subroot;
+
+	if (child_temp != NULL)      
+		child_temp->parent = new_subroot->right;
 
 	//delete parent_temp;
 	//delete sub_child;
@@ -191,9 +213,9 @@ void RedBlackTreePnt::rb_insert_x(int index, Point pnt) {
 
 			while (cur != NULL) {
 				parent = cur;
-				if (pnt.x < cur->pnt[0].x)      
+				if (pnt.x < cur->pnt[0].x)
 					cur = cur->left;
-				else if (pnt.x > cur->pnt[0].x) 
+				else if (pnt.x > cur->pnt[0].x)
 					cur = cur->right;
 				else {
 					dup_f = true;
@@ -207,14 +229,15 @@ void RedBlackTreePnt::rb_insert_x(int index, Point pnt) {
 				cur->pnt.push_back(pnt);
 			}
 			else {
-				if (pnt.x < parent->pnt[0].x)       
+				if (pnt.x < parent->pnt[0].x)
 					parent->left = node;
-				else                                
+				else
 					parent->right = node;
 
 				node->parent = parent;
 
-				if (node->parent->color == 0)       this->balance(node);
+				if (node->parent->color == 0)       
+					this->balance(node);
 			}
 			this->N_pnt++;
 
@@ -240,8 +263,7 @@ void RedBlackTreePnt::rb_insert_y(int index, Point pnt) {
 	*/
 
 	// 중복 비허용
-	if (this->rb_search_y(pnt) == NULL) {
-		this->N_pnt++;
+	if (this->rb_search_y(pnt) != NULL) {
 		this->N_dup++;
 
 		return;
@@ -255,15 +277,17 @@ void RedBlackTreePnt::rb_insert_y(int index, Point pnt) {
 		//delete node;
 	}
 	else {
-		if (this->rb_search_x(pnt) == NULL) {
+		if (this->rb_search_y(pnt) == NULL) {
 			Node *cur = this->root;
 			Node *parent = NULL;
 			bool dup_f = false;
 
 			while (cur != NULL) {
 				parent = cur;
-				if (pnt.y < cur->pnt[0].y)      cur = cur->left;
-				else if (pnt.y > cur->pnt[0].y) cur = cur->right;
+				if (pnt.y < cur->pnt[0].y)      
+					cur = cur->left;
+				else if (pnt.y > cur->pnt[0].y) 
+					cur = cur->right;
 				else {
 					dup_f = true;
 					break;
@@ -276,12 +300,18 @@ void RedBlackTreePnt::rb_insert_y(int index, Point pnt) {
 				cur->pnt.push_back(pnt);
 			}
 			else {
-				if (pnt.y < parent->pnt[0].y)       parent->left = node;
-				else                                parent->right = node;
+				if (pnt.y < parent->pnt[0].y)       
+					parent->left = node;
+				else                                
+					parent->right = node;
 
 				node->parent = parent;
 
-				if (node->parent->color == 0)       this->balance(node);
+				//this->print_tree();
+				//std::cout << "---------------------------------------------------------------" << std::endl;
+
+				if (node->parent->color == 0)       
+					this->balance(node);
 			}
 			this->N_pnt++;
 
@@ -298,20 +328,26 @@ void RedBlackTreePnt::update_after_delete(Node *target, Node *parent, Node *sib,
 	// 보류
 }
 void RedBlackTreePnt::balance(Node *node) {
-	if (node->parent == this->root || node->parent == NULL)     return;
+	if (node->parent == this->root || node->parent == NULL)     
+		return;
 
 	Node *parent = node->parent;
 	Node *gparent = parent->parent;
 	Node *uncle = NULL;
 
-	if (parent == gparent->left)        
+	if (parent == gparent->left)
 		uncle = gparent->right;
-	else if (parent == gparent->right)  
+	else if (parent == gparent->right)
 		uncle = gparent->left;
 
-	if (uncle == NULL || (uncle != NULL && uncle->color == 1))      
+	if (uncle == NULL || (uncle != NULL && uncle->color == 1)) {
 		this->reconstruct(node);
-	else if (uncle != NULL && uncle->color == 0)                    
+
+		//this->print_tree();
+		//std::cout << "---------------------------------------------------------------" << std::endl;
+
+	}
+	else if (uncle != NULL && uncle->color == 0)
 		this->recolor(node);
 
 	//delete parent;
@@ -322,10 +358,15 @@ void RedBlackTreePnt::reconstruct(Node *node) {
 	Node *parent = node->parent;
 	Node *gparent = parent->parent;
 
-	if (parent == NULL)     return;
+	if (parent == NULL)     
+		return;
 
 	if (parent == gparent->left) {
-		if (node == parent->right)      parent = this->rotate_left(parent);
+		if (node == parent->right)      
+			parent = this->rotate_left(parent);
+
+		//this->print_tree();
+		//std::cout << "---------------------------------------------------------------" << std::endl;
 
 		gparent = parent->parent;
 		gparent = this->rotate_right(gparent);
@@ -334,7 +375,11 @@ void RedBlackTreePnt::reconstruct(Node *node) {
 		gparent->right->color = 0;
 	}
 	else if (parent == gparent->right) {
-		if (node == parent->left)       parent = this->rotate_right(parent);
+		if (node == parent->left)       
+			parent = this->rotate_right(parent);
+
+		//this->print_tree();
+		//std::cout << "---------------------------------------------------------------" << std::endl;
 
 		gparent = parent->parent;
 		gparent = this->rotate_left(gparent);
@@ -351,20 +396,20 @@ void RedBlackTreePnt::recolor(Node *node) {
 	Node *gparent = parent->parent;
 	Node *uncle = NULL;
 
-	if (parent == gparent->left)        
+	if (parent == gparent->left)
 		uncle = gparent->right;
-	else if (parent == gparent->right)  
+	else if (parent == gparent->right)
 		uncle = gparent->left;
 
 	parent->color = 1;
 	uncle->color = 1;
 
-	if (gparent == this->root)      
+	if (gparent == this->root)
 		gparent->color = 1;
 	else {
 		gparent->color = 0;
 
-		if (gparent->parent != NULL && gparent->parent->color == 1)        
+		if (gparent->parent != NULL && gparent->parent->color == 1)
 			this->balance(gparent);
 	}
 
@@ -438,6 +483,20 @@ void RedBlackTreePnt::print_tree_util(Node *node, int depth) {
 	else						cout << "b";
 	cout << "(" << node->pnt.size() << ")" << endl;
 	if (node->left != NULL)			this->print_tree_util(node->left, depth + 1);
+}
+void RedBlackTreePnt::print_points() {
+	if (this->xy_idx == 0)
+		cout << "<Points - X sorted>" << endl;
+	if (this->xy_idx == 1)
+		cout << "<Points - Y sorted>" << endl;
+	this->print_points_util(this->root);
+	cout << "<Points end>" << endl << endl;;
+}
+void RedBlackTreePnt::print_points_util(Node *cur) {
+	if (cur->right != NULL)		this->print_points_util(cur->right);
+	for (int i = 0; i < cur->pnt.size(); i++)
+		cout << cur->pnt[i].x << " " << cur->pnt[i].y << endl;
+	if (cur->left != NULL)		this->print_points_util(cur->left);
 }
 int RedBlackTreePnt::count_nodes() {
 	return this->count_nodes_util(this->root, 0);

@@ -37,7 +37,7 @@ void print_time(double sec) {
 	}
 }
 
-/*
+
 int main() {
 
 	string fn = "pin_1.txt";
@@ -70,14 +70,16 @@ int main() {
 	int radius;
 	int index;
 
+	int iter = 0;
+
 	start = chrono::system_clock::now();
-	while (in.is_open() && !in.eof()) {
-		cout << ++line_cnt << ") ";
+	while (in.is_open() && !in.eof() && iter++ < 40) {
+		cout << "[" << ++line_cnt << "]" << endl;
 
 		tokens.clear();
 		getline(in, line);
 
-		cout << line << endl;
+		//cout << line << endl;
 		ss.clear();
 		ss.str(line);
 
@@ -98,7 +100,7 @@ int main() {
 			//range_tree_x.print_tree();
 			//cout << "------------------------------------------------------------------------" << endl;
 
-			if (range_tree_x.rb_search_x(pnt) != NULL)		
+			if (range_tree_x.rb_search_x(pnt) != NULL)
 				N_search_success++;
 		}
 		else if (tokens[0] == "-") {
@@ -106,15 +108,17 @@ int main() {
 			// º¸·ù
 		}
 		else if (tokens[0] == "?") {
-			
+
 			//cout << "-----------------------------------------------------------------------------" << endl;
 			//range_tree_x.print_tree();
-			
+
 
 			N_query++;
 			pnt.x = stoi(tokens[1]);
 			pnt.y = stoi(tokens[2]);
 			radius = stoi(tokens[3]);
+
+			range_tree_x.print_points();
 
 			query_result = range_search(range_tree_x, pnt, radius);
 			cout << query_result.first;
@@ -131,6 +135,6 @@ int main() {
 	chrono::duration<double> sec = end - start;
 
 	print_time(sec.count());
-	
+
 }
-*/
+

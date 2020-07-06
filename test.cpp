@@ -11,12 +11,12 @@ public:
 	}
 };
 
-void change_vector(vector<Node*> v, int index, int value) {
+void change_vector(vector<Node *> v, int index, int value) {
 	if (v.size() >= index)
 		return;
 }
 
-vector<Node*> make_vector1(vector<Node*> v) {
+vector<Node *> make_vector1(vector<Node *> v) {
 	//vector<Node*> v;
 
 	v.push_back(new Node(1));
@@ -26,7 +26,7 @@ vector<Node*> make_vector1(vector<Node*> v) {
 	return v;
 }
 
-vector<Node*> make_vector2(vector<Node*> v) {
+vector<Node *> make_vector2(vector<Node *> v) {
 	//vector<Node*> v;
 
 	v.push_back(new Node(10));
@@ -36,22 +36,27 @@ vector<Node*> make_vector2(vector<Node*> v) {
 	return v;
 }
 
-
+/*
 int main() {
-	vector<Node*> v_empty(0);
-	vector<Node*> v = make_vector1(v_empty);
+	
+	vector<Node *> v = make_vector1(vector<Node*>(0));
 
 	for (int i = 0; i < v.size(); i++) {
 		cout << v[i]->key << " ";
 	}
 	cout << endl;
 
-	v = make_vector2(vector<Node*>(0));
+	v = make_vector2(vector<Node *>(0));
 
 	for (int i = 0; i < v.size(); i++) {
 		cout << v[i]->key << " ";
 	}
 	cout << endl;
+
+	for (int i = 0; i < v.size(); i++) {
+		delete v[i];
+	}
 
 	v.clear();
 }
+*/

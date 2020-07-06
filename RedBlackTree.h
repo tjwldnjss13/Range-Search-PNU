@@ -30,6 +30,8 @@ public:
 	void replace_to_successor(Node *target, Node *suc);
 	void print_tree();
 	void print_tree_util(Node *node, int depth);
+	void print_points();
+	void print_points_util(Node *cur);
 	int count_nodes();
 	int count_nodes_util(Node *node, int count);
 };

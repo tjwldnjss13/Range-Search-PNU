@@ -19,3 +19,8 @@ insert 하고 search하는 것 다 해결
 
 시간이 너무 많이 걸려서 C++로 수정하는 중
 find nodes in range x에서 리턴이 아무것도 되지 않음 (수정 해야됨)
+
+메모리 관리하는 문제같은거 생겨서, Node*에 대한 벡터 만들 때마다 튕김(지금은 어느정도 해결?)
+range tree x 는 잘 만들어짐
+range tree y도 만들어지긴 만들어지는데, 해당 범위에 대한 point들이 range tree y에 다 안들어감
+알고리즘 조금 더 손봐야 될거같음
