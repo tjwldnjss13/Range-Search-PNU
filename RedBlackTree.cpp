@@ -430,42 +430,58 @@ void RedBlackTreePnt::rb_delete(Point pnt) {
 	else if (target->left != NULL && target->right == NULL) {
 		if (child_f == 0) {
 			parent->left = target->left;
-			parent->left->parent = parent;
 
-			if (parent->left->color == 1)
+			if (parent->left != NULL) {
+				if (parent->left->color == 1)
+					double_black_f = true;
+
+				parent->left->color = 1;
+				parent->left->parent = parent;
+			}
+			else
 				double_black_f = true;
-
-			parent->left->color = 1;
 		}
 		else if (child_f == 1) {
 			parent->right = target->left;
-			parent->right->parent = parent;
 
-			if (parent->right->color == 1)
+			if (parent->right != NULL) {
+				if (parent->right->color == 1)
+					double_black_f = true;
+
+				parent->right->color = 1;
+				parent->right->parent = parent;
+			}
+			else
 				double_black_f = true;
-
-			parent->right->color = 1;
 		}
 	}
 	// When target only has right child
 	else if (target->left == NULL && target->right != NULL) {
 		if (child_f == 0) {
 			parent->left = target->right;
-			parent->left->parent = parent;
 
-			if (parent->left->color == 1)
+			if (parent->left != NULL) {
+				if (parent->left->color == 1)
+					double_black_f = true;
+
+				parent->left->color = 1;
+				parent->left->parent = parent;
+			}
+			else
 				double_black_f = true;
-
-			parent->left->color = 1;
 		}
 		else if (child_f == 1) {
 			parent->right = target->right;
-			parent->right->parent = parent;
 
-			if (parent->right->color == 1)
+			if (parent->right != NULL) {
+				if (parent->right->color == 1)
+					double_black_f = true;
+
+				parent->left->color = 1;
+				parent->right->parent = parent;
+			}
+			else
 				double_black_f = true;
-
-			parent->left->color = 1;
 		}
 	}
 	// When target has both children
