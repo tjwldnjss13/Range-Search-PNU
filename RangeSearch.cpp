@@ -23,7 +23,7 @@ std::pair<int, int> range_search(RedBlackTreePnt range_tree_x, Point pnt_center,
 	int y_max = pnt_center.y + radius;
 
 	std::cout << "x : " << x_min << " - " << x_max << std::endl;
-	std::cout << "y : " << y_min << " - " << y_min << std::endl;
+	std::cout << "y : " << y_min << " - " << y_max << std::endl;
 
 	std::pair<int, int> range_x = std::make_pair(x_min, x_max);
 	std::pair<int, int> range_y = std::make_pair(y_min, y_max);
@@ -45,11 +45,11 @@ std::pair<int, int> range_search(RedBlackTreePnt range_tree_x, Point pnt_center,
 	std::vector<int> max_i_list;
 
 	while (p_i < pnts.size()) {
-		int dist_sq = (int)pow(pnts[p_i].x - pnt_center.x, 2) + pow(pnts[p_i].y - pnt_center.y, 2);
+		 double dist_sq = pow(pnts[p_i].x - pnt_center.x, 2) + pow(pnts[p_i].y - pnt_center.y, 2);
 
-		if (dist_sq > (int)pow(radius, 2)) {
-			idxs.erase(idxs.begin() + (p_i - 1));
-			pnts.erase(pnts.begin() + (p_i - 1));
+		if (dist_sq > pow(radius, 2)) {
+			idxs.erase(idxs.begin() + p_i);
+			pnts.erase(pnts.begin() + p_i);
 			continue;
 		}
 
@@ -68,17 +68,22 @@ std::pair<int, int> range_search(RedBlackTreePnt range_tree_x, Point pnt_center,
 	int min_i = -1;
 
 	while (max_i_list.size() > 0) {
-		if (min_i == -1 || max_i_list[max_i_list.size() - 1] < min_i)		min_i = max_i_list[max_i_list.size() - 1];
+		if (min_i == -1 || max_i_list[max_i_list.size() - 1] < min_i)		
+			min_i = max_i_list[max_i_list.size() - 1];
 
 		max_i_list.pop_back();
 	}
 
-	for (int i = 0; i < nodes.size(); i++)		delete nodes[i];
 	std::vector<int>().swap(idxs);
 	std::vector<Point>().swap(pnts);
 	std::vector<int>().swap(max_i_list);
 
 	int N_pnts = pnts.size();
+
+	for (int i = 0; i < nodes.size(); i++)
+		delete nodes[i];
+
+	nodes.clear();
 
 	return std::make_pair(N_pnts, min_i);
 }
@@ -92,6 +97,12 @@ std::vector<Node *> find_nodes_in_range_x(RedBlackTreePnt range_tree_x, std::pai
 
 		return nodes;
 	}
+
+	
+	range_tree_x.print_points();
+	range_tree_x.print_tree();
+	std::cout << "-----------------------------------------------------------------------------------" << std::endl;
+	
 
 	Node *splitv = NULL;
 
@@ -140,32 +151,35 @@ std::vector<Node *> find_nodes_in_range_x(RedBlackTreePnt range_tree_x, std::pai
 	}
 
 	while (t_r != NULL) {
-		if (t_r->pnt[0].x > range_x.first)		
+		if (t_r->pnt[0].x > range_x.second)		
 			t_r = t_r->left;
 		else {
 			nodes_subtree.clear();
 			nodes.push_back(t_r);
-			nodes_subtree.clear();
-			get_nodes_in_subtree(t_r->left, nodes_subtree);
+			nodes_subtree = get_nodes_in_subtree(t_r->left, nodes_subtree);
 
 			while (nodes_subtree.size() > 0) {
 				nodes.push_back(nodes_subtree[nodes_subtree.size() - 1]);
 				nodes_subtree.pop_back();
 			}
 
-			if (t_r->pnt[0].x == range_x.second)		break;
-			else										t_r = t_r->right;
+			if (t_r->pnt[0].x == range_x.second)		
+				break;
+			else										
+				t_r = t_r->right;
 		}
 	}
 
 	RedBlackTreePnt range_tree_y = make_range_tree_y(nodes);
 
+	
 	range_tree_y.print_points();
-
-	//range_tree_y.print_tree();
-	//std::cout << "====================================================================================" << std::endl;
+	range_tree_y.print_tree();
+	std::cout << "====================================================================================" << std::endl;
+	
 
 	std::vector<Node *> nodes_final = find_nodes_in_range_y(range_tree_y, range_y);
+	range_tree_y.delete_tree();
 
 	//for (int i = 0; i < nodes.size(); i++)			delete nodes[i];
 	//for (int i = 0; i < nodes_empty.size(); i++)	delete nodes_empty[i];
@@ -187,7 +201,7 @@ std::vector<Node *> find_nodes_in_range_y(RedBlackTreePnt range_tree_y, std::pai
 	Node *splitv = NULL;
 
 	while (cur != NULL) {
-		if (cur->pnt[0].x < range_y.first)			
+		if (cur->pnt[0].y < range_y.first)			
 			cur = cur->right;
 		else if (cur->pnt[0].y > range_y.second)	
 			cur = cur->left;
@@ -200,10 +214,12 @@ std::vector<Node *> find_nodes_in_range_y(RedBlackTreePnt range_tree_y, std::pai
 	if (splitv == NULL)		
 		return nodes;
 
-	nodes.push_back(splitv);
+	for (int p_i=0; p_i<splitv->pnt.size(); p_i++)
+		nodes.push_back(new Node(splitv->index[p_i], splitv->pnt[p_i]));
 
 	Node *t_l = splitv->left;
 	Node *t_r = splitv->right;
+	Node *node_temp;
 	std::vector<Node *> nodes_subtree;
 
 	while (t_l != NULL) {
@@ -212,14 +228,16 @@ std::vector<Node *> find_nodes_in_range_y(RedBlackTreePnt range_tree_y, std::pai
 		else {
 			nodes_subtree.clear();
 			nodes.push_back(t_l);
-			get_nodes_in_subtree(t_l->right, nodes_subtree);
+			nodes_subtree = get_nodes_in_subtree(t_l->right, nodes_subtree);
 
 			while (nodes_subtree.size() > 0) {
-				nodes.push_back(nodes_subtree[nodes_subtree.size() - 1]);
+				node_temp = nodes_subtree[nodes_subtree.size() - 1];
+				for (int p_i=0; p_i<node_temp->pnt.size(); p_i++)
+					nodes.push_back(new Node(node_temp->index[p_i], node_temp->pnt[p_i]));
 				nodes_subtree.pop_back();
 			}
 
-			if (t_l->pnt[0].x == range_y.first)		
+			if (t_l->pnt[0].y == range_y.first)		
 				break;
 			else									
 				t_l = t_l->left;
@@ -227,19 +245,19 @@ std::vector<Node *> find_nodes_in_range_y(RedBlackTreePnt range_tree_y, std::pai
 	}
 
 	while (t_r != NULL) {
-		if (t_r->pnt[0].x > range_y.first)		
+		if (t_r->pnt[0].y > range_y.second)		
 			t_r = t_r->left;
 		else {
 			nodes_subtree.clear();
 			nodes.push_back(t_r);
-			get_nodes_in_subtree(t_r->left, nodes_subtree);
+			nodes_subtree = get_nodes_in_subtree(t_r->left, nodes_subtree);
 
 			while (nodes_subtree.size() > 0) {
 				nodes.push_back(nodes_subtree[nodes_subtree.size() - 1]);
 				nodes_subtree.pop_back();
 			}
 
-			if (t_r->pnt[0].x == range_y.second)		
+			if (t_r->pnt[0].y == range_y.second)		
 				break;
 			else										
 				t_r = t_r->right;

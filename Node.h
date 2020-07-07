@@ -18,4 +18,4 @@ public:
 	Node(int index, Point pnt, int color = 1);
 };
 
-#endif#pragma once
+#endif

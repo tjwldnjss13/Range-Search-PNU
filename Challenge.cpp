@@ -73,7 +73,7 @@ int main() {
 	int iter = 0;
 
 	start = chrono::system_clock::now();
-	while (in.is_open() && !in.eof() && iter++ < 40) {
+	while (in.is_open() && !in.eof() && iter++ < 25) {
 		cout << "[" << ++line_cnt << "]" << endl;
 
 		tokens.clear();
@@ -108,17 +108,10 @@ int main() {
 			// º¸·ù
 		}
 		else if (tokens[0] == "?") {
-
-			//cout << "-----------------------------------------------------------------------------" << endl;
-			//range_tree_x.print_tree();
-
-
 			N_query++;
 			pnt.x = stoi(tokens[1]);
 			pnt.y = stoi(tokens[2]);
 			radius = stoi(tokens[3]);
-
-			range_tree_x.print_points();
 
 			query_result = range_search(range_tree_x, pnt, radius);
 			cout << query_result.first;
@@ -135,6 +128,8 @@ int main() {
 	chrono::duration<double> sec = end - start;
 
 	print_time(sec.count());
+
+	range_tree_x.delete_tree();
 
 }
 

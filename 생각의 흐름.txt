@@ -24,3 +24,5 @@ find nodes in range x에서 리턴이 아무것도 되지 않음 (수정 해야�
 range tree x 는 잘 만들어짐
 range tree y도 만들어지긴 만들어지는데, 해당 범위에 대한 point들이 range tree y에 다 안들어감
 알고리즘 조금 더 손봐야 될거같음
+
+메모리 관리하는 거 해결하기 위해서 다 쓰인 트리는 모두 할당 해제하는 delete_tree 함수 작성

@@ -322,7 +322,55 @@ void RedBlackTreePnt::rb_insert_y(int index, Point pnt) {
 	}
 }
 void RedBlackTreePnt::rb_delete(Point pnt) {
-	// 보류
+	Node *target = this->rb_search_x(pnt);
+
+	if (target == NULL) {
+		this->N_del_fail++;
+
+		return;
+	}
+
+	if (target->pnt.size() > 1) {
+		int del_i;
+		
+		for (del_i = 0; del_i < target->pnt.size(); del_i++) {
+			if (target->pnt[del_i].x == pnt.x and target->pnt[del_i].y == pnt.y)
+				break;
+		}
+		target->index.erase(target->index.begin() + del_i);
+		this->N_del++;
+		this->N_pnt--;
+		
+		return;
+	}
+
+	Node *parent = target->parent;
+	int child_f;
+
+	if (target == this->root)
+		child_f = -1;
+	else if (target == parent->left)
+		child_f = 0;
+	else
+		child_f = 1;
+
+	int target_color = target->color;
+	bool double_black_f = false;
+
+	// When target is a leaf node
+	if (target->left == NULL && target->right == NULL) {
+
+	}
+	// When target is an internal node
+	else if (target->left != NULL && target->right == NULL) {
+
+	}
+	else if (target->left == NULL & target->left != NULL) {
+
+	}
+	else {
+
+	}
 }
 void RedBlackTreePnt::update_after_delete(Node *target, Node *parent, Node *sib, int child_f) {
 	// 보류
@@ -497,6 +545,16 @@ void RedBlackTreePnt::print_points_util(Node *cur) {
 	for (int i = 0; i < cur->pnt.size(); i++)
 		cout << cur->pnt[i].x << " " << cur->pnt[i].y << endl;
 	if (cur->left != NULL)		this->print_points_util(cur->left);
+}
+void RedBlackTreePnt::delete_tree() {
+	this->delete_tree_util(this->root);
+}
+void RedBlackTreePnt::delete_tree_util(Node* node) {
+	if (node->right != NULL)
+		this->delete_tree_util(node->right);
+	if (node->left != NULL)
+		this->delete_tree_util(node->left);
+	delete node;
 }
 int RedBlackTreePnt::count_nodes() {
 	return this->count_nodes_util(this->root, 0);

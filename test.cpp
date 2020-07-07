@@ -38,25 +38,9 @@ vector<Node *> make_vector2(vector<Node *> v) {
 
 /*
 int main() {
-	
-	vector<Node *> v = make_vector1(vector<Node*>(0));
+	double d = 3.0;
+	int i = (int)d + 5;
 
-	for (int i = 0; i < v.size(); i++) {
-		cout << v[i]->key << " ";
-	}
-	cout << endl;
-
-	v = make_vector2(vector<Node *>(0));
-
-	for (int i = 0; i < v.size(); i++) {
-		cout << v[i]->key << " ";
-	}
-	cout << endl;
-
-	for (int i = 0; i < v.size(); i++) {
-		delete v[i];
-	}
-
-	v.clear();
+	cout << i << endl;
 }
 */

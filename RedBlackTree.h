@@ -32,6 +32,8 @@ public:
 	void print_tree_util(Node *node, int depth);
 	void print_points();
 	void print_points_util(Node *cur);
+	void delete_tree();
+	void delete_tree_util(Node* node);
 	int count_nodes();
 	int count_nodes_util(Node *node, int count);
 };
