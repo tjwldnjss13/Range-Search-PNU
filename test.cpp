@@ -38,9 +38,8 @@ vector<Node *> make_vector2(vector<Node *> v) {
 
 /*
 int main() {
-	double d = 3.0;
-	int i = (int)d + 5;
-
-	cout << i << endl;
+	int a = 0;
+	bool b = false;
+	cout << b << endl;
 }
 */

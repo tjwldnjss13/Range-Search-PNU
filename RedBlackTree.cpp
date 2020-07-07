@@ -174,6 +174,64 @@ Node *RedBlackTreePnt::get_successor(Node *node) {
 
 	return suc;
 }
+Node *RedBlackTreePnt::replace_to_predecessor(Node *target, Node *pre) {
+	if (target == pre->parent) {
+		pre->right = target->right;
+
+		if (pre->right != NULL)     pre->right->parent = pre;
+	}
+	else {
+		pre->left = target->left;
+		pre->right = target->right;
+
+		if (pre->left != NULL)      pre->left->parent = pre;
+		if (pre->right != NULL)     pre->right->parent = pre;
+
+		pre->parent->right = NULL;
+	}
+
+	if (target == this->root) {
+		pre->parent = NULL;
+		this->root = pre;
+	}
+	else {
+		if (target == target->parent->left)     target->parent->left = pre;
+		else                                    target->parent->right = pre;
+
+		pre->parent = target->parent;
+	}
+
+	return pre;
+}
+Node *RedBlackTreePnt::replace_to_successor(Node *target, Node *suc) {
+	if (target == suc->parent) {
+		suc->left = target->left;
+
+		if (suc->left != NULL)      suc->left->parent = suc;
+	}
+	else {
+		suc->left = target->left;
+		suc->right = target->right;
+
+		if (suc->left != NULL)      suc->left->parent = suc;
+		if (suc->right != NULL)     suc->right->parent = suc;
+
+		suc->parent->left = NULL;
+	}
+
+	if (target == this->root) {
+		suc->parent = NULL;
+		this->root = suc;
+	}
+	else {
+		if (target == target->parent->left)        target->parent->left = suc;
+		else                                       target->parent->right = suc;
+
+		suc->parent = target->parent;
+	}
+
+	return suc;
+}
 Node *RedBlackTreePnt::get_root() { return this->root; }
 void RedBlackTreePnt::rb_insert_x(int index, Point pnt) {
 	// 중복 허용
@@ -222,13 +280,14 @@ void RedBlackTreePnt::rb_insert_x(int index, Point pnt) {
 					break;
 				}
 			}
-			Node *node = new Node(index, pnt, 0);
 
 			if (dup_f) {
 				cur->index.push_back(index);
 				cur->pnt.push_back(pnt);
 			}
 			else {
+				Node *node = new Node(index, pnt, 0);
+
 				if (pnt.x < parent->pnt[0].x)
 					parent->left = node;
 				else
@@ -338,6 +397,7 @@ void RedBlackTreePnt::rb_delete(Point pnt) {
 				break;
 		}
 		target->index.erase(target->index.begin() + del_i);
+		target->pnt.erase(target->pnt.begin() + del_i);
 		this->N_del++;
 		this->N_pnt--;
 		
@@ -359,21 +419,218 @@ void RedBlackTreePnt::rb_delete(Point pnt) {
 
 	// When target is a leaf node
 	if (target->left == NULL && target->right == NULL) {
-
+		double_black_f = true;
+		
+		if (child_f == 0)
+			parent->left = NULL;
+		else if (child_f == 1)
+			parent->right = NULL;
 	}
-	// When target is an internal node
+	// When target only has left child
 	else if (target->left != NULL && target->right == NULL) {
+		if (child_f == 0) {
+			parent->left = target->left;
+			parent->left->parent = parent;
 
-	}
-	else if (target->left == NULL & target->left != NULL) {
+			if (parent->left->color == 1)
+				double_black_f = true;
 
+			parent->left->color = 1;
+		}
+		else if (child_f == 1) {
+			parent->right = target->left;
+			parent->right->parent = parent;
+
+			if (parent->right->color == 1)
+				double_black_f = true;
+
+			parent->right->color = 1;
+		}
 	}
+	// When target only has right child
+	else if (target->left == NULL && target->right != NULL) {
+		if (child_f == 0) {
+			parent->left = target->right;
+			parent->left->parent = parent;
+
+			if (parent->left->color == 1)
+				double_black_f = true;
+
+			parent->left->color = 1;
+		}
+		else if (child_f == 1) {
+			parent->right = target->right;
+			parent->right->parent = parent;
+
+			if (parent->right->color == 1)
+				double_black_f = true;
+
+			parent->left->color = 1;
+		}
+	}
+	// When target has both children
 	else {
+		Node *pre = this->get_predecessor(target);
+		Node *suc = this->get_successor(target);
 
+		if (pre->depth < suc->depth) {
+			if (suc->color == 1)
+				double_black_f = true;
+
+			suc->color = 1;
+			target = this->replace_to_successor(target, suc);
+		}
+		else {
+			if (pre->color == 1)
+				double_black_f = true;
+
+			pre->color = 1;
+			target = this->replace_to_predecessor(target, pre);
+		}
+	}
+
+	// When target's color is red, just delete it
+	if (target->color == 0) {
+		this->N_pnt--;
+		this->N_del++;
+		
+		return;
+	}
+	// When target's color is black
+	else {
+		if (!double_black_f) {
+			this->N_pnt--;
+			this->N_del++;
+
+			return;
+		}
+
+		Node *sib;
+
+		if (child_f == 0)
+			sib = parent->right;
+		else if (child_f == 1)
+			sib = parent->left;
+		else {
+			this->N_pnt--;
+			this->N_del++;
+
+			return;
+		}
+
+		this->update_after_delete(target, parent, sib, child_f);
+		this->N_del++;
+		this->N_pnt--;
 	}
 }
 void RedBlackTreePnt::update_after_delete(Node *target, Node *parent, Node *sib, int child_f) {
-	// 보류
+	if (parent == NULL)
+		return;
+
+	if (sib == NULL)
+		return;
+
+	// When sibling's color is red
+	if (sib->color == 0) {
+		sib->color = 1;
+		target->color = 0;
+
+		if (child_f == 0)
+			this->rotate_left(parent);
+		else if (child_f == 1)
+			this->rotate_right(parent);
+	}
+	// When sibling's color is black (complicated)
+	else {
+		bool double_black_f = false;
+
+		// When target is parent's left child
+		if (child_f == 0) {
+			// When sibling's left and right are both black
+			if ((sib->left == NULL || (sib->left != NULL && sib->left->color == 1))
+				&& (sib->right == NULL || (sib->right != NULL && sib->right->color == 1))) {
+				sib->color = 0;
+				double_black_f = (parent->color == 1);
+				parent->color = 1;
+
+				if (double_black_f) {
+					target = parent;
+					parent = parent->parent;
+
+					if (target == this->root)
+						return;
+
+					if (target == parent->left) {
+						child_f = 0;
+						sib = parent->right;
+					}
+					else {
+						child_f = 1;
+						sib = parent->left;
+					}
+
+					this->update_after_delete(target, parent, sib, child_f);
+				}
+			}
+			// when sibling's left is red and right is black
+			else if ((sib->left != NULL && sib->left->color == 0) && (sib->right == NULL || (sib->right != NULL && sib->right->color == 1))) {
+				sib->color = 0;
+				sib->left->color = 1;
+				this->rotate_left(sib);
+			}
+			// When sibling's right is red
+			else {
+				sib->color = parent->color;
+				parent->color = 1;
+				if (sib->right != NULL)
+					sib->right->color = 1;
+				this->rotate_left(parent);
+			}
+		}
+		// When target is parent's right child
+		else if (child_f == 1) {
+			// When sibling's left and right are both black
+			if ((sib->left == NULL || (sib->left != NULL && sib->left->color == 1))
+				&& (sib->right == NULL || (sib->right != NULL && sib->right->color == 1))) {
+				sib->color = 0;
+				double_black_f = (parent->color == 1);
+				parent->color = 1;
+				if (double_black_f) {
+					target = parent;
+					parent = parent->parent;
+
+					if (target == this->root)
+						return;
+
+					if (target == parent->left) {
+						child_f = 0;
+						sib = parent->right;
+					}
+					else {
+						child_f = 1;
+						sib = parent->left;
+					}
+
+					this->update_after_delete(target, parent, sib, child_f);
+				}
+			}
+			// When sibling's left is black and right is red
+			else if ((sib->left == NULL || (sib->left != NULL && sib->left->color == 1)) && (sib->right != NULL && sib->right->color == 1)) {
+				sib->color = 0;
+				sib->right->color = 1;
+				this->rotate_right(sib);
+			}
+			// When sibling's left is red
+			else {
+				sib->color = parent->color;
+				parent->color = 1;
+
+				if (sib->left != NULL)
+					sib->left->color = 1;
+				this->rotate_right(parent);
+			}
+		}
+	}
 }
 void RedBlackTreePnt::balance(Node *node) {
 	if (node->parent == this->root || node->parent == NULL)     
@@ -450,7 +707,9 @@ void RedBlackTreePnt::recolor(Node *node) {
 		uncle = gparent->left;
 
 	parent->color = 1;
-	uncle->color = 1;
+	
+	if (uncle != NULL)
+		uncle->color = 1;
 
 	if (gparent == this->root)
 		gparent->color = 1;
@@ -464,60 +723,6 @@ void RedBlackTreePnt::recolor(Node *node) {
 	//delete parent;
 	//delete gparent;
 	//delete uncle;
-}
-void RedBlackTreePnt::replace_to_predecessor(Node *target, Node *pre) {
-	if (target == pre->parent) {
-		pre->right = target->right;
-
-		if (pre->right != NULL)     pre->right->parent = pre;
-	}
-	else {
-		pre->left = target->left;
-		pre->right = target->right;
-
-		if (pre->left != NULL)      pre->left->parent = pre;
-		if (pre->right != NULL)     pre->right->parent = pre;
-
-		pre->parent->right = NULL;
-	}
-
-	if (target == this->root) {
-		pre->parent = NULL;
-		this->root = pre;
-	}
-	else {
-		if (target == target->parent->left)     target->parent->left = pre;
-		else                                    target->parent->right = pre;
-
-		pre->parent = target->parent;
-	}
-}
-void RedBlackTreePnt::replace_to_successor(Node *target, Node *suc) {
-	if (target == suc->parent) {
-		suc->left = target->left;
-
-		if (suc->left != NULL)      suc->left->parent = suc;
-	}
-	else {
-		suc->left = target->left;
-		suc->right = target->right;
-
-		if (suc->left != NULL)      suc->left->parent = suc;
-		if (suc->right != NULL)     suc->right->parent = suc;
-
-		suc->parent->left = NULL;
-	}
-
-	if (target == this->root) {
-		suc->parent = NULL;
-		this->root = suc;
-	}
-	else {
-		if (target == target->parent->left)        target->parent->left = suc;
-		else                                       target->parent->right = suc;
-
-		suc->parent = target->parent;
-	}
 }
 void RedBlackTreePnt::print_tree() {
 	if (this->root == NULL)		return;

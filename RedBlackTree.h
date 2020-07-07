@@ -18,6 +18,8 @@ public:
 	Node *rotate_right(Node *node);
 	Node *get_predecessor(Node *node);
 	Node *get_successor(Node *node);
+	Node *replace_to_predecessor(Node *target, Node *pre);
+	Node *replace_to_successor(Node *target, Node *suc);
 	Node *get_root();
 	void rb_insert_x(int index, Point pnt);
 	void rb_insert_y(int index, Point pnt);
@@ -26,8 +28,6 @@ public:
 	void balance(Node *node);
 	void reconstruct(Node *node);
 	void recolor(Node *node);
-	void replace_to_predecessor(Node *target, Node *pre);
-	void replace_to_successor(Node *target, Node *suc);
 	void print_tree();
 	void print_tree_util(Node *node, int depth);
 	void print_points();
